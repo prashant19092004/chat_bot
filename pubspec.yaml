@@ -1,0 +1,22 @@
+name: ai_chatbot
+description: A Flutter chatbot app using Gemini AI.
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_generative_ai: ^0.1.0
+  flutter_markdown: ^0.6.18
+  shared_preferences: ^2.2.2
+  flutter_dotenv: ^5.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  assets:
+    - .env
