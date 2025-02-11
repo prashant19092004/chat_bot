@@ -1,16 +1,36 @@
-# ai_chatbot
+# Flutter Chatbot with Gemini AI
 
-A new Flutter project.
+This project is a Flutter-powered chatbot integrated with Google Gemini AI, providing intelligent and dynamic responses. It leverages Gemini API to process user queries and deliver meaningful interactions.
 
-## Getting Started
+##✨ Features
 
-This project is a starting point for a Flutter application.
+✅ Chat interface with a sleek UI
+✅ AI-powered responses using Gemini AI
+✅ Flutter for cross-platform compatibility (Android & iOS)
+✅ API integration for real-time communication
 
-A few resources to get you started if this is your first Flutter project:
+##🚀 How to Run
+Clone the Repository
+git clone https://github.com/your-username/your-repo.git
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+cd your-repo
+Install Dependencies
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+flutter pub get
+Run the App
+
+flutter run
+
+##🔗 API Setup
+To integrate the Gemini AI API, follow these steps:
+
+Obtain your API key from Google Gemini.
+Store it securely in your Flutter project (e.g., dotenv for environment variables).
+
+📸 Screenshots
+![chat_screen](https://github.com/user-attachments/assets/6de4415b-8b33-4a19-99e7-ca592fa209c3)
+![chat_screen2](https://github.com/user-attachments/assets/a161de39-95a3-42c5-abc0-e61a01283c1b)
+
+
+##📜 License
+This project is open-source and free to use. Feel free to contribute and improve it!
