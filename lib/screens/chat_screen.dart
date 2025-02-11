@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -19,10 +19,17 @@ class _ChatScreenState extends State<ChatScreen> {
   // Define the orange color
   final Color primaryColor = const Color(0xFFFC6011);
 
-  final model = GenerativeModel(
-    model: 'gemini-pro',
-    apiKey: dotenv.env['GEMINI_API_KEY'] ?? '',
-  );
+  late final GenerativeModel model;
+
+  @override
+  void initState() {
+    super.initState();
+    final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+    model = GenerativeModel(
+      model: 'gemini-pro',
+      apiKey: apiKey,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,24 +42,6 @@ class _ChatScreenState extends State<ChatScreen> {
         centerTitle: true,
         backgroundColor: primaryColor,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.menu,
-            color: Colors.white,
-            size: 24,
-          ),
-          onPressed: () {},
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 24,
-            ),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -73,9 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
           if (_isLoading)
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-              ),
+              child: LoadingDots(color: primaryColor),
             ),
           Container(
             decoration: BoxDecoration(
@@ -92,14 +79,6 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
             child: Row(
               children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.attach_file,
-                    color: primaryColor,
-                    size: 24,
-                  ),
-                  onPressed: () {},
-                ),
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -112,14 +91,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.mic,
-                    color: primaryColor,
-                    size: 24,
-                  ),
-                  onPressed: () {},
                 ),
                 IconButton(
                   icon: Icon(
@@ -303,5 +274,96 @@ class ChatBubble extends StatelessWidget {
 
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+class LoadingDots extends StatefulWidget {
+  final Color color;
+  
+  const LoadingDots({
+    super.key,
+    required this.color,
+  });
+
+  @override
+  State<LoadingDots> createState() => _LoadingDotsState();
+}
+
+class _LoadingDotsState extends State<LoadingDots> with TickerProviderStateMixin {
+  late List<AnimationController> _controllers;
+  late List<Animation<double>> _animations;
+  late List<Animation<double>> _bounceAnimations;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(3, (index) {
+      return AnimationController(
+        duration: const Duration(milliseconds: 600),
+        vsync: this,
+      );
+    });
+    
+    // Start the infinite animation loop for each controller
+    for (var i = 0; i < _controllers.length; i++) {
+      Future.delayed(Duration(milliseconds: i * 180), () {
+        if (mounted) {
+          _controllers[i].repeat(reverse: true);
+        }
+      });
+    }
+    
+    _animations = _controllers.map((controller) {
+      return Tween<double>(begin: 0.3, end: 1.0)
+          .animate(CurvedAnimation(
+            parent: controller,
+            curve: const Interval(0.0, 0.5, curve: Curves.easeInOut),
+          ));
+    }).toList();
+
+    _bounceAnimations = _controllers.map((controller) {
+      return Tween<double>(begin: 0, end: -6.0)
+          .animate(CurvedAnimation(
+            parent: controller,
+            curve: const Interval(0.0, 0.5, curve: Curves.easeInOut),
+          ));
+    }).toList();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (index) {
+        return AnimatedBuilder(
+          animation: _controllers[index],
+          builder: (context, child) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              child: Transform.translate(
+                offset: Offset(0, _bounceAnimations[index].value),
+                child: Container(
+                  height: 8,
+                  width: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.color.withOpacity(_animations[index].value),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+  
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 } 

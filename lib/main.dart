@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/chat_screen.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('Error loading .env file: $e');
+    // Provide a fallback API key if .env fails to load
+    dotenv.env['GEMINI_API_KEY'] = 'AIzaSyAL9vl-F61ogSn-qVvLxNgBCoxxhLe-xS4';
+  }
   runApp(const MyApp());
 }
 
