@@ -15,7 +15,7 @@ This project is a Flutter-powered chatbot integrated with Google Gemini AI, prov
 
 # 🚀 How to Run
 Clone the Repository
-git clone [https://github.com/your-username/your-repo.git](https://github.com/prashant19092004/chat_bot.git)
+git clone https://github.com/prashant19092004/chat_bot.git
 
 cd your-repo
 
